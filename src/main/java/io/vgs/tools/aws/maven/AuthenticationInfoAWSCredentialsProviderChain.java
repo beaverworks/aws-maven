@@ -25,8 +25,8 @@ final class AuthenticationInfoAWSCredentialsProviderChain extends AWSCredentials
 
   AuthenticationInfoAWSCredentialsProviderChain(AuthenticationInfo authenticationInfo) {
     super(
-        new DefaultAWSCredentialsProviderChain(),
-        new AuthenticationInfoAWSCredentialsProvider(authenticationInfo)
+            new AuthenticationInfoAWSCredentialsProvider(authenticationInfo),
+            new DefaultAWSCredentialsProviderChain()
     );
   }
 }

@@ -18,6 +18,8 @@ package io.vgs.tools.aws.maven;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.ClientConfiguration;
+import com.amazonaws.SdkClientException;
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.internal.Mimetypes;
@@ -103,10 +105,20 @@ public final class SimpleStorageServiceWagon extends AbstractWagon {
             this.bucketName = S3Utils.getBucketName(repository);
             this.baseDirectory = S3Utils.getBaseDirectory(repository);
 
-            AmazonS3 noRegionAmazonS3 = AmazonS3ClientBuilder.standard()
-                    .withCredentials(credentialsProvider)
-                    .withClientConfiguration(clientConfiguration)
-                    .build();
+
+            AmazonS3 noRegionAmazonS3;
+            try {
+                noRegionAmazonS3 = AmazonS3ClientBuilder.standard()
+                        .withCredentials(credentialsProvider)
+                        .withClientConfiguration(clientConfiguration)
+                        .build();
+            } catch (SdkClientException ex) {
+                noRegionAmazonS3 = AmazonS3ClientBuilder.standard()
+                        .withCredentials(credentialsProvider)
+                        .withClientConfiguration(clientConfiguration)
+                        .withRegion(Regions.DEFAULT_REGION)
+                        .build();
+            }
 
             this.amazonS3 = AmazonS3ClientBuilder.standard()
                     .withCredentials(credentialsProvider)
